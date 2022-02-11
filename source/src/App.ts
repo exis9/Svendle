@@ -239,8 +239,17 @@ function vSQProc( vh:any ):void{
 	})
 
 	sq('div').on('click', function(this:any){//re-edit
-		if ( sq(this).parent().attr('line') != gb.curLine )
+		const line = parseInt( sq(this).parent().attr('line') )
+		if ( isNaN(line) || (line != gb.curLine || !gb.bGaming) )
+		{
+			if ( !isNaN(line) && (line < gb.curLine || !gb.bGaming) )
+			{
+				const w = sq(this).parent().text()
+				if ( w.length == gb.maxLetter )
+					window.open( 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(w + ' meaning') )
+			}
 			return
+		}
 		const len = sq(this).index()
 		gb.curIndex = len
 		sq('*').removeClass('reedit')
