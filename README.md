@@ -1,7 +1,7 @@
 # Svendle
 Svendle lets players make their own wordle puzzles using user generation system!
 
-[DEMO](https://exis9.github.io/wordle8/)
+[DEMO](https://exis9.github.io/Svendle/)
 
 Svendle is a full scratch remake version based on [Wordle](https://www.powerlanguage.co.uk/wordle/).
 It has some new features like the user generated puzzle and re-editing.
