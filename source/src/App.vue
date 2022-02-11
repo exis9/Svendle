@@ -120,7 +120,7 @@
 							<h4>NEXT SVENDLE</h4>
 							<div id="idNextTime"></div>
 						</td>
-						<td><SplitButton label="Share" icon="pi pi-plus" :model="items" class="mb-2"></SplitButton></td>
+						<td><SplitButton @click="sharegame" label="Share" icon="pi pi-plus" :model="items" class="mb-2"></SplitButton></td>
 					</tr>
 				</table>
 			</div>
@@ -368,20 +368,21 @@
 						label: 'Twitter',
 						icon: 'pi pi-twitter',
 						command: () => {
-							window.location.href = 'https://twitter.com/intent/tweet?hashtags=Svendle&url=' + location.href
+							window.open( 'https://twitter.com/intent/tweet?hashtags=Svendle&url=' + location.href )
 						}
 					},
 					{
 						label: 'Facebook',
 						icon: 'pi pi-facebook',
 						command: () => {
-							window.location.href = 'https://www.facebook.com/share.php?u=' + location.href
+							window.open( 'https://www.facebook.com/share.php?u=' + location.href )
 						}
 					},
 					{
 						label: 'Copy Link',
 						icon: 'pi pi-copy',
 						command: () => {
+							navigator.clipboard.writeText( location.href )
 							this.toast('Copied the link! Please share it! :D');
 						}
 					},
@@ -389,7 +390,7 @@
 						label: 'Follow me',
 						icon: 'pi pi-user-plus',
 						command: () => {
-							window.location.href = 'https://twitter.com/ExisVR'
+							window.open( 'https://twitter.com/ExisVR' )
 						}
 					}
 				]
@@ -419,6 +420,11 @@
 			user: 'John'
 		},
 		methods: {
+			sharegame(){
+				this.toast('Copied the link! Please share it! :D');
+				navigator.clipboard.writeText( location.href )
+				window.open( 'https://twitter.com/intent/tweet?hashtags=Svendle&url=' + location.href )
+			},
 			dialogConfig(){
 				this.bModalConfig = true
 			},
