@@ -1,5 +1,5 @@
 # Svendle
-Svendle lets players make their own wordle puzzles using user generation system!
+[Svendle](https://exis9.github.io/Svendle/) lets players make their own wordle puzzles using user generation system!
 
 # Play this game on the web!
 [LIVE DEMO](https://exis9.github.io/Svendle/)
