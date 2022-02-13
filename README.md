@@ -4,6 +4,14 @@
 # Play this game on the web!
 [LIVE DEMO](https://exis9.github.io/Svendle/)
 
+# About
+
+Svendle is a full scratch remake version based on [Wordle](https://www.powerlanguage.co.uk/wordle/).
+It has some new features like the user generated puzzle and re-editing.
+
+I developed Svendle using [sQuery](https://squery.vercel.app/) and Vue3 Cli.
+
+---
 
 <img width="557" alt="Screen Shot 2022-02-13 at 15 47 22" src="https://user-images.githubusercontent.com/91220554/153772154-e8cd513d-207e-4b2d-b741-2e8634a02f2c.png">
 
@@ -21,8 +29,4 @@
 <img width="609" alt="Screen Shot 2022-02-13 at 15 49 55" src="https://user-images.githubusercontent.com/91220554/153772168-e322c979-59d2-448d-b186-667964dbd4c9.png">
 
 
-Svendle is a full scratch remake version based on [Wordle](https://www.powerlanguage.co.uk/wordle/).
-It has some new features like the user generated puzzle and re-editing.
-
-I developed Svendle using [sQuery](https://squery.vercel.app/) and Vue3 Cli.
 
