@@ -1,6 +1,6 @@
 <template>
 	<header>
-		<h1 id="idGameTitle">Svendle</h1>
+		<h1 id="idGameTitle">Svendle<div class="cMode" mode="random">Random</div><div class="cMode" mode="your">Your</div></h1>
 		<i id="idHelp" class="cHeadIcon pi pi-question-circle" @click="dialogHelp($event)"></i>
 		<i id="idConfig" class="cHeadIcon pi pi-cog" @click="dialogConfig($event)"></i>
 		<i id="idStat" class="cHeadIcon pi pi-chart-bar" @click="dialogStat($event)"></i>
@@ -8,6 +8,8 @@
 
 	<router-view/>
 	<Toast position="top-center" />
+	<ConfirmDialog position="top" 
+		:dismissableMask="true"></ConfirmDialog>
 
 	<!-- HELP -->
 	<Dialog v-model:visible="bModalHelp"
@@ -17,7 +19,7 @@
 		:show="flip3D()"
 	>
 		<div style="text-align:center">
-			<div style="max-width: 500px; max-height: 1000px; width:calc(100vw - 60px);height:100vh;">
+			<div style="max-width: 500px; width:calc(100vw - 60px);">
 				<h4>HOW TO PLAY</h4>
 				<section>
 					<div class="instructions">
@@ -58,7 +60,8 @@
 							</div>
 						</div>
 						<p><strong>A new SVENDLE will be available each day!</strong></p>
-						<div style="margin-top:20px">
+						<p><strong>You can also <a @click="clickGen" href="#">generate</a> SVENDLE for your friends!</strong></p>
+						<div style="margin-top:8px">
 							<a href="https://www.buymeacoffee.com/Exis"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=Exis&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"></a>
 						</div>
 					</div>
@@ -191,6 +194,7 @@
 		margin: 0 0 10px 0;
 	}
 
+	/* TOAST */
 	.p-toast {
 		width: 220px;
 
@@ -203,11 +207,8 @@
 			text-align: center;
 		}
 	}
-	
-	.p-inputswitch-checked .p-inputswitch-slider {
-		background-color: rgb(106,170,100)!important;
-	}
 
+	/* DIALOG */
 	.p-dialog-header {
 		display: block;
 		text-align: right;
@@ -216,6 +217,30 @@
 		.p-dialog-header-icons {
 			display: inline-block;
 		}
+	}
+	.p-confirm-dialog {
+		.p-dialog-content, .p-dialog-header, .p-dialog-footer {
+			background-color: rgb(25 64 255 / 26%) !important;
+			backdrop-filter: blur(5px);
+			color: #fff!important;
+			.p-confirm-dialog-accept {
+				box-shadow: none!important;
+				background-color: rgba(100, 91, 227, .3) !important;
+				border-color: #0055ff70;
+			}
+		}
+
+		@supports not (backdrop-filter: blur(5px)){
+			.p-dialog-content, .p-dialog-header, .p-dialog-footer {
+				background-color: rgba(0, 24, 142, 0.6) !important;
+			}
+		}
+	}
+	
+	
+	/* SWITCH SLIDER */
+	.p-inputswitch-checked .p-inputswitch-slider {
+		background-color: rgb(106,170,100)!important;
 	}
 
 	/* STAT */
@@ -345,6 +370,8 @@
 	import Toast from 'primevue/toast';
 	import InputText from 'primevue/inputtext';
 	import SplitButton from 'primevue/splitbutton';
+	import { useConfirm } from "primevue/useconfirm";
+	import ConfirmDialog from 'primevue/confirmdialog';
 	
 	import { gb } from "@/global";
 	import { getWordOfTheDay } from "./Words"
@@ -353,6 +380,28 @@
 
 	export default defineComponent({
 		name: 'App',
+		setup() {
+			const _confirm = useConfirm()
+			const confirm = (msg:string, cbYes:any=null, cbNo:any=null, icon='pi pi-exclamation-triangle') => {
+				_confirm.require({
+					message: '',
+					header: '',
+					icon: icon,
+					accept: () => {
+						if ( cbYes )
+							cbYes()
+					},
+					reject: () => {
+						if ( cbNo )
+							cbNo()
+					}
+				})
+				setTimeout(()=>{
+					sq('.p-confirm-dialog-message').html(msg)
+				}, 1)
+			}
+			return { confirm }
+		},
 		data(){
 			return {
 				curVer: gb.curVer,
@@ -413,6 +462,7 @@
 			Dialog,
 			InputSwitch,
 			Toast,
+			ConfirmDialog,
 			InputText,
 			SplitButton,
 		},
@@ -420,10 +470,40 @@
 			user: 'John'
 		},
 		methods: {
+			clickGen(){
+				sq('#idConfig').trg('click')
+			},
 			sharegame(){
-				this.toast('Copied the link! Please share it! :D');
-				navigator.clipboard.writeText( location.href )
-				window.open( 'https://twitter.com/intent/tweet?hashtags=Svendle&url=' + location.href )
+				const genResult=()=>{
+					let f = ''
+					for ( let j=0; j<gb.maxTry; j++ )
+					{
+						let line = ''
+						for ( let i=0; i<gb.maxLetter; i++ )
+						{
+							let col = '⬛'
+							if ( sq('#idFrame section').eq(j).find('div').eq(i).hasClass('correct') )
+								col = '🟩'
+							else if ( sq('#idFrame section').eq(j).find('div').eq(i).hasClass('present') )
+								col = '🟨'
+							line += col
+						}
+						f += `${line}\n`
+						if ( !line.includes('⬛') && !line.includes('🟨') )
+							break
+					}
+					const d = new Date()
+					f += '\nSvendle ' + (d.getMonth() + 1) + '/' + d.getDate()
+					f += '\n\nChallenge this result: ' + location.href
+					return f
+				}
+				this.toast('Copied the result! Please share it! :D');
+				const res = genResult()
+				navigator.clipboard.writeText( res )
+				console.log( res )
+				setTimeout(()=>{
+					window.open( 'https://twitter.com/intent/tweet?hashtags=Svendle&text=' + encodeURIComponent(res) )
+				}, 1500)
 			},
 			dialogConfig(){
 				this.bModalConfig = true

@@ -43,7 +43,7 @@ function fillStat( vh: any ){
 		sq('#idStatPlotContainer').find('.cGraphLine').eq(i).find('.cGraph').eq(len-1).html( n )
 		
 	}
-	vh.flAvg = (totalVal / gb.stat.numPlayed / 6 * 100).toFixed(1)
+	vh.flAvg = (100 - totalVal / gb.stat.numPlayed / 6 * 100).toFixed(1)
 	if ( isNaN(vh.flAvg) )
 		vh.flAvg = 0
 }
@@ -55,32 +55,59 @@ function saveStat(){
 	localStorage.setItem('numStreak', stat.numStreak as any )
 	localStorage.setItem('maxStreak', stat.maxStreak as any )
 	localStorage.setItem('statPlots', JSON.stringify( stat.statPlots as any ) )
+	
+	if ( gb.stat.playedWords.length > 10 )
+		gb.stat.playedWords.pop()
+	
+	gb.stat.playedWords.push( gb.wordToday )
+	localStorage.setItem('playedWords', JSON.stringify( stat.playedWords as any ) )
 }
 function shakeLine( line:number ){
 	sq('#idFrame section').eq(line).removeClass('cShake')
 	sq('#idFrame section').eq(line).addClass('cShake')
 }
-function rotateLine( vh:any, line:number, cb:any ){
-	const occur = (s:string, v:string):number=>{
+
+const checkAnswer = ( ans:string, it:string ):string[] => {
+	const count_occur = (s:string, v:string):number=>{//count_occur_in_string
 		return s.split(v).length - 1
 	}
-	const input_letters = sq('#idFrame section').eq(line).find('div').text();
+	const count_occur_in_r = ( r:string[], v:string, it:string, w:string ):number => {
+		let n = 0
+		for ( let i=0; i < r.length; i++ )
+		{
+			if ( r[i] == v && it[i] == w )
+				n++
+		}
+		return n
+	}
+	
+	const r:string[] = []
+	for ( let i=0; i < ans.length; i++ )
+	{
+		if ( ans[i] == it[i] )
+			r[i] = 'correct'
+		else
+			r[i] = 'absent'
+	}
+	for ( let i=0; i < ans.length; i++ )
+	{
+		const w = it[i], cnt = count_occur_in_r( r, 'correct', ans, w ) + count_occur_in_r( r, 'present', it, w )
+		if ( ans[i] != w && count_occur( ans, w ) > cnt )
+			r[i] = 'present'
+	}
+	return r
+}
+
+function rotateLine( vh:any, line:number, cb:any ){
+	const input_letters = sq('#idFrame section').eq(line).text().toLowerCase();
+	const letter_states = checkAnswer( gb.curWord, input_letters )
+
 	sq('#idFrame section').eq(line).find('div').each(function(this:any, index:number){
 		setTimeout(()=>{
 			sq(this).removeClass('cPopIn').removeClass('cRotateX')
 			sq(this).addClass('cRotateX')
-			const t = sq(this).text().toLowerCase()
-			let cName = 'absent';
-			if ( gb.curWord.charAt(index) == t )
-				cName = 'correct'
-			else if ( gb.curWord.includes(t) ){
-				const el = sq('#idFrame section').eq(line).find('div').contains( t.toUpperCase() )
-				if ( occur( gb.curWord, t ) == 1 && ( el.hasClass('correct') || el.hasClass('present') ) ){
-					console.log('skip the 2nd occur!') //!!! NOTE: currentry not supports the 3rd duplicate like eerie
-				} else {
-					cName = 'present'
-				}
-			}
+			const cName = letter_states[ index ]
+
 			setTimeout(()=>{
 				sq(this).addClass(cName)
 				if ( index >= gb.maxLetter-1 )
@@ -217,8 +244,43 @@ function enter( vh:any ):void{
 	console.log('comp: '+v)
 }
 
+function guideHelp( vh:any ){
+	if ( !localStorage.getItem('numWin') )
+	{
+		sq('#idHelp').trg('click')
+	}
+	const bAlreadyDaily = gb.stat.playedWords.includes( getWordOfTheDay() )
+	// already played
+	if ( location.search.includes('?r') && !bAlreadyDaily ){
+		location.href = './'
+	} else if ( gb.stat.playedWords.includes( getWordOfTheDay(vh) ) ){
+		if ( bAlreadyDaily ){
+			if ( location.search.includes('?q') ){
+				vh.confirm(
+					`You've played this word already!<br>
+					Do you wanna play the <b class="cWordComb cRandomComb">Random Word</b> instead?`, ()=>{
+					location.href = './?r'
+				}, null, 'pi pi-check-square')
+			} else {
+				vh.confirm(
+					`You've played the <b class="cWordComb">Today's Word</b> already!<br>
+					Do you wanna play the <b class="cWordComb cRandomComb">Random Word</b> instead?`, ()=>{
+					location.href = './?r'
+				}, null, 'pi pi-check-square')
+			}
+		} else {
+			vh.confirm('Do you wanna play the <b class="cWordComb">Today\'s Word!</b>', ()=>{
+				location.href = './'
+			}, null, 'pi pi-check-square')
+		}
+		console.log(gb.stat.playedWords)
+	}
+}
+
 function vSQProc( vh:any ):void{
 	setTheme( bDarkTheme() )	//setting the loaded theme
+
+	guideHelp( vh )
 
 	setTimeout(()=>{
 		sq('#idGameKeyboard button[data-key]').on('click', function( this:any ){

@@ -1,22 +1,31 @@
 const defaultMessage = ' Try word of the day instead.'
 import { gb } from './global'
+import { sq } from './sq'
 
-export function getWordOfTheDay( vh:any ) {
-	if (location.search) {
-		const q = location.search.replace('?q=', '')
-		//q = btoa(q)
-		try {
-			const query = atob( q )
-			if (query.length !== gb.maxLetter) {
-				vh.toast(`Incorrect word length from encoded query. ${defaultMessage}`, '', 4000)
-			} else {
-				return query
+export function getWordOfTheDay( vh:any=null ) {
+	sq('#idGameTitle .cMode').hide()
+	if ( vh && location.search) {
+		const s = location.search
+		if ( s.includes('?r') ){//random
+			const idx = Math.floor(Math.random() * answers.length)
+			sq('#idGameTitle .cMode[mode="random"]').fadeIn(800)
+			return answers[ idx ]
+		} else {//your
+			const q = s.replace('?q=', '')
+			try {
+				const query = atob( q )
+				if (query.length !== gb.maxLetter) {
+					vh.toast(`Incorrect word length from encoded query. ${defaultMessage}`, '', 4000)
+				} else {
+					sq('#idGameTitle .cMode[mode="your"]').fadeIn(800)
+					return query
+				}
+			} catch (e) {
+				vh.toast(`Malformed encoded word query. ${defaultMessage}`, '', 4000)
 			}
-		} catch (e) {
-			vh.toast(`Malformed encoded word query. ${defaultMessage}`, '', 4000)
 		}
 	}
-
+	// daily
 	const now = new Date()
 	const start = new Date(2022, 0, 0)
 	const diff = Number(now) - Number(start)
