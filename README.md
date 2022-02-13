@@ -7,7 +7,7 @@
 # About
 
 Svendle is a full scratch remake version based on [Wordle](https://www.powerlanguage.co.uk/wordle/).
-It has some new features like the user generated puzzle and re-editing.
+It has some new features like the user generated puzzle, re-editing, and the dictionary jump.
 
 I developed Svendle using [sQuery](https://squery.vercel.app/) and Vue3 Cli.
 
