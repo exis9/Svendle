@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["about"],{f820:function(t,n,a){"use strict";a.r(n);var e=a("7a23"),o={class:"about"},c=Object(e["j"])("h1",null,"This is an about page",-1),s=[c];function u(t,n,a,c,u,b){return Object(e["w"])(),Object(e["i"])("div",o,s)}var b=a("04a9"),i=(a("4121"),Object(e["n"])({name:"About",data:function(){return console.log(b["a"]),{test:b["a"].siteName}}})),r=a("6b0d"),d=a.n(r);const w=d()(i,[["render",u]]);n["default"]=w}}]);
-//# sourceMappingURL=about.3e7b6122.js.map
