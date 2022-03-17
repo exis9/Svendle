@@ -4,6 +4,8 @@
 # Play this game on the web!
 [LIVE DEMO](https://exis9.github.io/Svendle/)
 
+https://www.youtube.com/watch?v=dVllcuNkV_I
+
 # About
 
 Svendle is a full scratch remake version based on [Wordle](https://www.powerlanguage.co.uk/wordle/).
