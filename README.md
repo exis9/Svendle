@@ -4,7 +4,7 @@
 # Play this game on the web!
 [LIVE DEMO](https://exis9.github.io/Svendle/)
 
-https://www.youtube.com/embed/dVllcuNkV_I
+https://www.youtube.com/watch?v=dVllcuNkV_I
 
 # About
 
